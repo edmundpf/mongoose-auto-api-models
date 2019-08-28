@@ -1,4 +1,4 @@
-# Mongoose Auto API - Models Modules
+# Mongoose Auto API - Models Module
 [![Build Status](https://travis-ci.org/edmundpf/mongoose-auto-api-models.svg?branch=master)](https://travis-ci.org/edmundpf/mongoose-auto-api-models)
 [![npm version](https://badge.fury.io/js/mongoose-auto-api.models.svg)](https://badge.fury.io/js/mongoose-auto-api.models)
 > Automatic Mongoose REST API - Module to generate models ☕
