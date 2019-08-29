@@ -8,12 +8,12 @@ bcrypt = require('bcrypt');
 encryptField = async function(rec, key, recType = 'doc') {
   var SALT_WORK_FACTOR, error, salt;
   SALT_WORK_FACTOR = 10;
-  if (recType = 'doc' && !doc.isModified(key) && !doc.isNew) {
+  if (recType = 'doc' && !rec.isModified(key) && !rec.isNew) {
     return;
   }
   try {
     salt = (await bcrypt.genSalt(SALT_WORK_FACTOR));
-    doc[key] = (await bcrypt.hash(doc[key], salt));
+    rec[key] = (await bcrypt.hash(rec[key], salt));
   } catch (error1) {
     error = error1;
     return {
@@ -21,7 +21,7 @@ encryptField = async function(rec, key, recType = 'doc') {
       errorMsg: error
     };
   }
-  return doc;
+  return rec;
 };
 
 //: Hook Methods

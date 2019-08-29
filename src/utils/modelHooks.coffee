@@ -6,12 +6,12 @@ bcrypt = require('bcrypt')
 
 encryptField = (rec, key, recType='doc') ->
 	SALT_WORK_FACTOR = 10
-	if recType='doc' and !doc.isModified(key) and !doc.isNew
+	if recType='doc' and !rec.isModified(key) and !rec.isNew
 		return
 	try
 		salt = await bcrypt.genSalt(SALT_WORK_FACTOR)
-		doc[key] = await bcrypt.hash(
-			doc[key],
+		rec[key] = await bcrypt.hash(
+			rec[key],
 			salt
 		)
 	catch error
@@ -19,7 +19,7 @@ encryptField = (rec, key, recType='doc') ->
 			message: "Could not #{ if recType is 'doc' then 'create' else 'update' } encrypted field."
 			errorMsg: error
 		}
-	return doc
+	return rec
 
 #: Hook Methods
 
