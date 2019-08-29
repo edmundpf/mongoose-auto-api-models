@@ -1,19 +1,19 @@
 assert = require('chai').assert
 should = require('chai').should()
-info = require('../index')
+models = require('../index')
 
 # Main import
 
 describe 'index', ->
 	it 'Returns object', ->
-		info.should.be.a('object')
+		models.should.be.a('object')
 	it 'User Auth info exists', ->
-		assert.equal(info.userAuth?, true)
+		assert.equal(models.userAuth?, true)
 	it 'User Auth "model" key exists', ->
-		assert.equal(info.userAuth.modelName?, true)
+		assert.equal(models.userAuth.modelName?, true)
 	it 'Secret Key info exists', ->
-		assert.equal(info.secretKey?, true)
+		assert.equal(models.secretKey?, true)
 	it 'Secret Key "model" key exists', ->
-		assert.equal(info.secretKey.modelName?, true)
+		assert.equal(models.secretKey.modelName?, true)
 
 #::: End Program :::
