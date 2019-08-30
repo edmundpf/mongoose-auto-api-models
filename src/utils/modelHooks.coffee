@@ -6,7 +6,7 @@ bcrypt = require('bcrypt')
 
 encryptField = (rec, key, recType='doc') ->
 	SALT_WORK_FACTOR = 10
-	if recType='doc' and !rec.isModified(key) and !rec.isNew
+	if recType == 'doc' and !rec.isModified(key) and !rec.isNew
 		return
 	try
 		salt = await bcrypt.genSalt(SALT_WORK_FACTOR)
@@ -47,7 +47,7 @@ saveEncryptMethod = (doc, key) ->
 # Pre-Update hook to encrypt field
 
 updateEncryptMethod = (query, key) ->
-	return await encryptField(query, key, 'doc')
+	return await encryptField(query, key, 'query')
 
 #: Hooks
 

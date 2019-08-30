@@ -8,7 +8,7 @@ bcrypt = require('bcrypt');
 encryptField = async function(rec, key, recType = 'doc') {
   var SALT_WORK_FACTOR, error, salt;
   SALT_WORK_FACTOR = 10;
-  if (recType = 'doc' && !rec.isModified(key) && !rec.isNew) {
+  if (recType === 'doc' && !rec.isModified(key) && !rec.isNew) {
     return;
   }
   try {
@@ -56,7 +56,7 @@ saveEncryptMethod = async function(doc, key) {
 
 // Pre-Update hook to encrypt field
 updateEncryptMethod = async function(query, key) {
-  return (await encryptField(query, key, 'doc'));
+  return (await encryptField(query, key, 'query'));
 };
 
 //: Hooks
