@@ -1,6 +1,6 @@
 {
 	"name": "mongoose-auto-api.models",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "Automatic Mongoose REST API - Module to generate models",
 	"main": "./js/index.js",
 	"files": [
@@ -33,7 +33,7 @@
 	"dependencies": {
 		"bcrypt": "^3.0.6",
 		"mongoose": "^5.6.11",
-		"mongoose-auto-api.info": "0.0.6",
+		"mongoose-auto-api.info": "^0.0.7",
 		"mongoose-sequence": "^5.2.0",
 		"print-tools-js": "^1.1.0"
 	},

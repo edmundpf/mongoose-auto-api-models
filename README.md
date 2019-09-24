@@ -8,6 +8,20 @@
 
 ## Model Setup
 * [Model Setup - mongoose-auto-api.info](https://github.com/edmundpf/mongoose-auto-api-info/blob/master/README.md#model-setup)
+* Returns object
+	* modelName (String)
+	* collectionName (String)
+	* primaryKey (String)
+	* allFields (Array)
+	* listFields (Array)
+	* encryptFields (Array)
+	* schema (Object)
+	* incField (String)
+		* incrementing UID field
+	* uidCollection (String)
+		* UID increment collection
+	* model (Object)
+		* Mongoose model
 
 ## Usage
 ``` javascript
