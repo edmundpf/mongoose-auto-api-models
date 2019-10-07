@@ -1,4 +1,5 @@
 bcrypt = require('bcrypt')
+b64Encode = require('nodejs-base64').encode
 
 #: Helper Methods
 
@@ -17,6 +18,20 @@ encryptField = (rec, key, recType='doc') ->
 	catch error
 		return {
 			message: "Could not #{ if recType is 'doc' then 'create' else 'update' } encrypted field."
+			errorMsg: error
+		}
+	return rec
+
+# Base 64 Encoded Field
+
+encodeField = (rec, key, recType='doc') ->
+	if recType == 'doc' and !rec.isModified(key) and !rec.isNew
+		return
+	try
+		rec[key] = b64Encode(rec[key])
+	catch error
+		return {
+			message: "Could not #{ if recType is 'doc' then 'create' else 'update' } encoded field."
 			errorMsg: error
 		}
 	return rec
@@ -48,6 +63,16 @@ saveEncryptMethod = (doc, key) ->
 
 updateEncryptMethod = (query, key) ->
 	return await encryptField(query, key, 'query')
+
+# Pre-Save hook to encode field
+
+saveEncodeMethod = (doc, key) ->
+	return await encodeField(doc, key, 'doc')
+
+# Pre-Update hook to encode field
+
+updateEncodeMethod = (query, key) ->
+	return await encodeField(query, key, 'query')
 
 #: Hooks
 
@@ -81,11 +106,33 @@ updateEncryptHook = (key) ->
 			)
 	)
 
+#: Save Encode Hook
+
+saveEncodeHook = (key) ->
+	return(
+		-> return await saveEncodeMethod(
+				this,
+				key
+			)
+	)
+
+#: Update Encode Hook
+
+updateEncodeHook = (key) ->
+	return(
+		-> return await updateEncodeMethod(
+				this.getUpdate(),
+				key
+			)
+	)
+
 #: Exports
 
 module.exports =
 	listCreate: listCreateHook
 	saveEncrypt: saveEncryptHook
 	updateEncrypt: updateEncryptHook
+	saveEncode: saveEncodeHook
+	updateEncode: updateEncodeHook
 
 #::: End Program :::

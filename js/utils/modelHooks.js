@@ -1,6 +1,8 @@
-var bcrypt, encryptField, listCreateHook, listCreateMethod, saveEncryptHook, saveEncryptMethod, updateEncryptHook, updateEncryptMethod;
+var b64Encode, bcrypt, encodeField, encryptField, listCreateHook, listCreateMethod, saveEncodeHook, saveEncodeMethod, saveEncryptHook, saveEncryptMethod, updateEncodeHook, updateEncodeMethod, updateEncryptHook, updateEncryptMethod;
 
 bcrypt = require('bcrypt');
+
+b64Encode = require('nodejs-base64').encode;
 
 //: Helper Methods
 
@@ -18,6 +20,24 @@ encryptField = async function(rec, key, recType = 'doc') {
     error = error1;
     return {
       message: `Could not ${(recType === 'doc' ? 'create' : 'update')} encrypted field.`,
+      errorMsg: error
+    };
+  }
+  return rec;
+};
+
+// Base 64 Encoded Field
+encodeField = function(rec, key, recType = 'doc') {
+  var error;
+  if (recType === 'doc' && !rec.isModified(key) && !rec.isNew) {
+    return;
+  }
+  try {
+    rec[key] = b64Encode(rec[key]);
+  } catch (error1) {
+    error = error1;
+    return {
+      message: `Could not ${(recType === 'doc' ? 'create' : 'update')} encoded field.`,
       errorMsg: error
     };
   }
@@ -59,6 +79,16 @@ updateEncryptMethod = async function(query, key) {
   return (await encryptField(query, key, 'query'));
 };
 
+// Pre-Save hook to encode field
+saveEncodeMethod = async function(doc, key) {
+  return (await encodeField(doc, key, 'doc'));
+};
+
+// Pre-Update hook to encode field
+updateEncodeMethod = async function(query, key) {
+  return (await encodeField(query, key, 'query'));
+};
+
 //: Hooks
 
 //: List Create Hook
@@ -82,11 +112,27 @@ updateEncryptHook = function(key) {
   });
 };
 
+//: Save Encode Hook
+saveEncodeHook = function(key) {
+  return (async function() {
+    return (await saveEncodeMethod(this, key));
+  });
+};
+
+//: Update Encode Hook
+updateEncodeHook = function(key) {
+  return (async function() {
+    return (await updateEncodeMethod(this.getUpdate(), key));
+  });
+};
+
 //: Exports
 module.exports = {
   listCreate: listCreateHook,
   saveEncrypt: saveEncryptHook,
-  updateEncrypt: updateEncryptHook
+  updateEncrypt: updateEncryptHook,
+  saveEncode: saveEncodeHook,
+  updateEncode: updateEncodeHook
 };
 
 //::: End Program :::

@@ -40,6 +40,19 @@ modelGen = (obj) ->
 				hooks.updateEncrypt(field)
 			)
 
+	# Add Encoding Hooks
+
+	if obj.encodeFields.length > 0
+		for field in obj.encodeFields
+			model.pre(
+				'save',
+				hooks.saveEncode(field)
+			)
+			model.pre(
+				'updateOne',
+				hooks.updateEncode(field)
+			)
+
 	# Auto-Increment Plugin
 
 	model.plugin(
@@ -66,6 +79,9 @@ modelGen = (obj) ->
 
 	if obj.encryptFields.length > 0
 		logs.push("Encrypted fields: #{obj.encryptFields.join(', ')}")
+
+	if obj.encodeFields.length > 0
+		logs.push("Encoded fields: #{obj.encodeFields.join(', ')}")
 
 	for log in logs
 		p.bullet(

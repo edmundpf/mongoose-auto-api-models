@@ -12,7 +12,7 @@ autoIncrement = require('mongoose-sequence')(mongoose);
 
 //: Generate Model from object
 modelGen = function(obj) {
-  var field, i, j, len, len1, log, logs, model, ref;
+  var field, i, j, k, len, len1, len2, log, logs, model, ref, ref1;
   // Model Gen
   model = new mongoose.Schema(obj.schema, {
     collection: obj.collectionName,
@@ -32,6 +32,15 @@ modelGen = function(obj) {
       model.pre('updateOne', hooks.updateEncrypt(field));
     }
   }
+  // Add Encoding Hooks
+  if (obj.encodeFields.length > 0) {
+    ref1 = obj.encodeFields;
+    for (j = 0, len1 = ref1.length; j < len1; j++) {
+      field = ref1[j];
+      model.pre('save', hooks.saveEncode(field));
+      model.pre('updateOne', hooks.updateEncode(field));
+    }
+  }
   // Auto-Increment Plugin
   model.plugin(autoIncrement, {
     id: `${obj.collectionName}_uid`,
@@ -48,8 +57,11 @@ modelGen = function(obj) {
   if (obj.encryptFields.length > 0) {
     logs.push(`Encrypted fields: ${obj.encryptFields.join(', ')}`);
   }
-  for (j = 0, len1 = logs.length; j < len1; j++) {
-    log = logs[j];
+  if (obj.encodeFields.length > 0) {
+    logs.push(`Encoded fields: ${obj.encodeFields.join(', ')}`);
+  }
+  for (k = 0, len2 = logs.length; k < len2; k++) {
+    log = logs[k];
     p.bullet(log, {
       indent: 1,
       log: false
