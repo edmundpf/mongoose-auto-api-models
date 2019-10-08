@@ -15,6 +15,7 @@
 	* allFields (Array)
 	* listFields (Array)
 	* encryptFields (Array)
+	* encodeFields (Array)
 	* schema (Object)
 	* incField (String)
 		* incrementing UID field
