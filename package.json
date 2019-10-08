@@ -1,6 +1,6 @@
 {
 	"name": "mongoose-auto-api.models",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Automatic Mongoose REST API - Module to generate models",
 	"main": "./js/index.js",
 	"files": [

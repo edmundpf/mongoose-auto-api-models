@@ -1,5 +1,5 @@
 bcrypt = require('bcrypt')
-b64Encode = require('nodejs-base64').encode
+b64Encode = require('nodejs-base64').base64encode
 
 #: Helper Methods
 
