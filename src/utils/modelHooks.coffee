@@ -36,6 +36,21 @@ encodeField = (rec, key, recType='doc') ->
 		}
 	return rec
 
+# Sub-Document Field
+
+subDocField = (rec, key, recType='doc') ->
+	if recType == 'doc' and !rec.isModified(key) and !rec.isNew
+		return
+	try
+		if typeof rec[key] == 'string' and rec[key][0] == '{' and rec[key][rec[key].length - 1] == '}'
+			rec[key] = JSON.parse(rec[key])
+	catch error
+		return {
+			message: "Could not #{ if recType is 'doc' then 'create' else 'update' } sub-document field."
+			errorMsg: error
+		}
+	return rec
+
 #: Hook Methods
 
 # Pre-Save hook to save CSV lists for array fields
@@ -43,10 +58,11 @@ encodeField = (rec, key, recType='doc') ->
 listCreateMethod = (doc, fields) ->
 	try
 		for field in fields
-			vals = doc[field][0].split(',')
-			doc[field] = []
-			for val in vals
-				doc[field].push(val)
+			if ',' in doc[field][0]
+				vals = doc[field][0].split(',')
+				doc[field] = []
+				for val in vals
+					doc[field].push(val)
 	catch error
 		return Promise.resolve(
 			message: 'Could not set array field value.'
@@ -74,6 +90,16 @@ saveEncodeMethod = (doc, key) ->
 updateEncodeMethod = (query, key) ->
 	return await encodeField(query, key, 'query')
 
+# Pre-Save hook for sub-document field
+
+saveSubDocMethod = (doc, key) ->
+	return await subDocField(doc, key, 'doc')
+
+# Pre-Update hook for sub-document field
+
+updateSubDocMethod = (query, key) ->
+	return await subDocField(query, key, 'query')
+
 #: Hooks
 
 #: List Create Hook
@@ -86,7 +112,7 @@ listCreateHook = (fields) ->
 			)
 	)
 
-#: Save Encrypt Hook
+#: Save Sub-Document Hook
 
 saveEncryptHook = (key) ->
 	return(
@@ -96,7 +122,7 @@ saveEncryptHook = (key) ->
 			)
 	)
 
-#: Update Encrypt Hook
+#: Update Sub-Document Hook
 
 updateEncryptHook = (key) ->
 	return(
@@ -126,6 +152,26 @@ updateEncodeHook = (key) ->
 			)
 	)
 
+#: Save Sub-Document Hook
+
+saveSubDocHook = (key) ->
+	return(
+		-> return await saveSubDocMethod(
+				this,
+				key
+			)
+	)
+
+#: Update Sub-Document Hook
+
+updateSubDocHook = (key) ->
+	return(
+		-> return await updateSubDocMethod(
+				this.getUpdate(),
+				key
+			)
+	)
+
 #: Exports
 
 module.exports =
@@ -134,5 +180,7 @@ module.exports =
 	updateEncrypt: updateEncryptHook
 	saveEncode: saveEncodeHook
 	updateEncode: updateEncodeHook
+	saveSubDoc: saveSubDocHook
+	updateSubDoc: saveSubDocHook
 
 #::: End Program :::

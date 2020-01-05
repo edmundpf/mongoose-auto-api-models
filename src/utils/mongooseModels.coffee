@@ -53,6 +53,19 @@ modelGen = (obj) ->
 				hooks.updateEncode(field)
 			)
 
+	# Add Sub-Document Hooks
+
+	if obj.subDocFields.length > 0
+		for field in obj.subDocFields
+			model.pre(
+				'save',
+				hooks.saveSubDoc(field)
+			)
+			model.pre(
+				'updateOne',
+				hooks.updateSubDoc(field)
+			)
+
 	# Auto-Increment Plugin
 
 	model.plugin(
@@ -76,6 +89,9 @@ modelGen = (obj) ->
 	]
 	if obj.listFields.length > 0
 		logs.push("List fields: #{obj.listFields.join(', ')}")
+
+	if obj.subDocFields.length > 0
+		logs.push("Sub-Document fields: #{obj.subDocFields.join(', ')}")
 
 	if obj.encryptFields.length > 0
 		logs.push("Encrypted fields: #{obj.encryptFields.join(', ')}")

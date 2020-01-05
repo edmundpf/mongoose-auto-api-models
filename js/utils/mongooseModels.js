@@ -12,7 +12,7 @@ autoIncrement = require('mongoose-sequence')(mongoose);
 
 //: Generate Model from object
 modelGen = function(obj) {
-  var field, i, j, k, len, len1, len2, log, logs, model, ref, ref1;
+  var field, i, j, k, l, len, len1, len2, len3, log, logs, model, ref, ref1, ref2;
   // Model Gen
   model = new mongoose.Schema(obj.schema, {
     collection: obj.collectionName,
@@ -41,6 +41,15 @@ modelGen = function(obj) {
       model.pre('updateOne', hooks.updateEncode(field));
     }
   }
+  // Add Sub-Document Hooks
+  if (obj.subDocFields.length > 0) {
+    ref2 = obj.subDocFields;
+    for (k = 0, len2 = ref2.length; k < len2; k++) {
+      field = ref2[k];
+      model.pre('save', hooks.saveSubDoc(field));
+      model.pre('updateOne', hooks.updateSubDoc(field));
+    }
+  }
   // Auto-Increment Plugin
   model.plugin(autoIncrement, {
     id: `${obj.collectionName}_uid`,
@@ -54,14 +63,17 @@ modelGen = function(obj) {
   if (obj.listFields.length > 0) {
     logs.push(`List fields: ${obj.listFields.join(', ')}`);
   }
+  if (obj.subDocFields.length > 0) {
+    logs.push(`Sub-Document fields: ${obj.subDocFields.join(', ')}`);
+  }
   if (obj.encryptFields.length > 0) {
     logs.push(`Encrypted fields: ${obj.encryptFields.join(', ')}`);
   }
   if (obj.encodeFields.length > 0) {
     logs.push(`Encoded fields: ${obj.encodeFields.join(', ')}`);
   }
-  for (k = 0, len2 = logs.length; k < len2; k++) {
-    log = logs[k];
+  for (l = 0, len3 = logs.length; l < len3; l++) {
+    log = logs[l];
     p.bullet(log, {
       indent: 1,
       log: false
