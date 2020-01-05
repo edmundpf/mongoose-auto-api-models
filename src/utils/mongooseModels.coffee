@@ -53,19 +53,6 @@ modelGen = (obj) ->
 				hooks.updateEncode(field)
 			)
 
-	# Add Sub-Document Hooks
-
-	if obj.subDocFields.length > 0
-		for field in obj.subDocFields
-			model.pre(
-				'save',
-				hooks.saveSubDoc(field)
-			)
-			model.pre(
-				'updateOne',
-				hooks.updateSubDoc(field)
-			)
-
 	# Auto-Increment Plugin
 
 	model.plugin(

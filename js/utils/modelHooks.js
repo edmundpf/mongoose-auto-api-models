@@ -1,4 +1,4 @@
-var b64Encode, bcrypt, encodeField, encryptField, listCreateHook, listCreateMethod, saveEncodeHook, saveEncodeMethod, saveEncryptHook, saveEncryptMethod, saveSubDocHook, saveSubDocMethod, subDocField, updateEncodeHook, updateEncodeMethod, updateEncryptHook, updateEncryptMethod, updateSubDocHook, updateSubDocMethod,
+var b64Encode, bcrypt, encodeField, encryptField, listCreateHook, listCreateMethod, saveEncodeHook, saveEncodeMethod, saveEncryptHook, saveEncryptMethod, updateEncodeHook, updateEncodeMethod, updateEncryptHook, updateEncryptMethod,
   indexOf = [].indexOf;
 
 bcrypt = require('bcrypt');
@@ -39,26 +39,6 @@ encodeField = function(rec, key, recType = 'doc') {
     error = error1;
     return {
       message: `Could not ${(recType === 'doc' ? 'create' : 'update')} encoded field.`,
-      errorMsg: error
-    };
-  }
-  return rec;
-};
-
-// Sub-Document Field
-subDocField = function(rec, key, recType = 'doc') {
-  var error;
-  if (recType === 'doc' && !rec.isModified(key) && !rec.isNew) {
-    return;
-  }
-  try {
-    if (typeof rec[key] === 'string' && rec[key][0] === '{' && rec[key][rec[key].length - 1] === '}') {
-      rec[key] = JSON.parse(rec[key]);
-    }
-  } catch (error1) {
-    error = error1;
-    return {
-      message: `Could not ${(recType === 'doc' ? 'create' : 'update')} sub-document field.`,
       errorMsg: error
     };
   }
@@ -112,16 +92,6 @@ updateEncodeMethod = async function(query, key) {
   return (await encodeField(query, key, 'query'));
 };
 
-// Pre-Save hook for sub-document field
-saveSubDocMethod = async function(doc, key) {
-  return (await subDocField(doc, key, 'doc'));
-};
-
-// Pre-Update hook for sub-document field
-updateSubDocMethod = async function(query, key) {
-  return (await subDocField(query, key, 'query'));
-};
-
 //: Hooks
 
 //: List Create Hook
@@ -159,29 +129,13 @@ updateEncodeHook = function(key) {
   });
 };
 
-//: Save Sub-Document Hook
-saveSubDocHook = function(key) {
-  return (async function() {
-    return (await saveSubDocMethod(this, key));
-  });
-};
-
-//: Update Sub-Document Hook
-updateSubDocHook = function(key) {
-  return (async function() {
-    return (await updateSubDocMethod(this.getUpdate(), key));
-  });
-};
-
 //: Exports
 module.exports = {
   listCreate: listCreateHook,
   saveEncrypt: saveEncryptHook,
   updateEncrypt: updateEncryptHook,
   saveEncode: saveEncodeHook,
-  updateEncode: updateEncodeHook,
-  saveSubDoc: saveSubDocHook,
-  updateSubDoc: saveSubDocHook
+  updateEncode: updateEncodeHook
 };
 
 //::: End Program :::
