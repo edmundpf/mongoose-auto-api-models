@@ -4,7 +4,8 @@
 	"description": "Automatic Mongoose REST API - Module to generate models",
 	"main": "./js/index.js",
 	"files": [
-		"/js"
+		"/js/index.js",
+		"/js/utils"
 	],
 	"scripts": {
 		"test": "./node_modules/.bin/mocha js/tests",
